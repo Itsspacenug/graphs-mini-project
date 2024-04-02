@@ -67,7 +67,7 @@ public class GraphsMiniLab1
 		}
 		for(int r = 0; r < matrix.length; r++) {
 			for(int c = 0; c < matrix[r].length; c++) {
-				System.out.println(matrix[r][c]? "1" : "0");
+				System.out.print(matrix[r][c]? "1" : "0");
 			}
 			System.out.println();
 		}
@@ -95,6 +95,10 @@ public class GraphsMiniLab1
 			int num = scanner.nextInt();
 			int num2 = scanner.nextInt();
 			adjList[num].add(num2);
+		}
+		
+		for(int i =0; i < adjList.length; i++) {
+			System.out.println(i + ": " + adjList[i].toString());
 		}
 	}
 
