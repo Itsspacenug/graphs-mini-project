@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.Queue;
@@ -39,7 +41,7 @@ import java.util.Scanner;
 public class GraphsMiniLab2
 {
 	static final int numOfVertices = 10;
-	static LinkedList[] adjList;
+	static LinkedList<Integer>[] adjList;
 		
 	public static void main (String[] args) throws IOException
 	{
@@ -63,43 +65,23 @@ public class GraphsMiniLab2
 		 * 3) PRINT the order of your list using DFT and BFT
 		 */
 		Scanner sc1 = new Scanner(new File("edgesB.txt"));
-		ArrayList<String> edge1 = new ArrayList<>();
-		printAdjList(edge1);
+		
+		while(sc1.hasNextLine()) {
+			Scanner sc = new Scanner(sc1.nextLine().replace(',', ' '));
+			
+			int num = sc.nextInt();
+			adjList[num].add(sc.nextInt());
+			//Collections.reverse(adjList[num]);
+		}
+		/*for(int i =0; i < adjList.length; i++) {
+			System.out.println(i + ": " + adjList[i].toString());
+		}*/
+		
 		Scanner sc2 = new Scanner(new File("edgesC.txt"));
-		ArrayList<String> edge2 = new ArrayList<>();
-		printAdjList(edge2);
 		
 		depthFirstTraversal();
 	}
 	
-	static void printAdjList(ArrayList<String> edgeList){
-		/* Print an adjacency list given
-		 * 	a list of a Graph's edges.
-		 *	
-		 *	-Don't worry about sorting the Linked Lists
-		 */
-		 
-		 LinkedList[] adjList = new LinkedList[numOfVertices];
-		 
-		//The above way of using the the Java LinkedList class requires
-		//us to initialize each index of our array as a new LinkedList, or 
-		//else it will consider it to be null.
-		for(int x = 0; x < numOfVertices; x++)
-		 {
-		 	adjList[x] = new LinkedList();
-		 }
-		 
-		for(String edge : edgeList) {
-			Scanner scanner = new Scanner(edge.replace(',', ' '));
-			int num = scanner.nextInt();
-			int num2 = scanner.nextInt();
-			adjList[num].add(num2);
-		}
-		
-		/*for(int i =0; i < adjList.length; i++) {
-			System.out.println(i + ": " + adjList[i].toString());
-		}*/
-	}
 	public static void depthFirstTraversal(){
 		/* Print out the order of your graph in 
 		 * Depth First Traversal.
@@ -108,9 +90,40 @@ public class GraphsMiniLab2
 		 *		a) Recursive
 		 *		b) Using a Stack - You can use the built-in class.
 		 */
-		boolean[] visited = new boolean[adjList.length];
+		HashSet<Integer> visited = new HashSet<>();
 		Stack<Integer> stack = new Stack<>();
-		stack.push(adjList)
+		visited.add(0);
+		System.out.print(0+ "");
+		for(Object item: adjList[0]) {
+			stack.push((Integer)item);
+		}
+		
+		while(!stack.isEmpty()) {
+			int current = stack.pop();
+			if(!visited.contains(current)) {
+				visited.add(current);
+				for(Object item: adjList[current]) {
+					stack.push((Integer) item);
+				}
+				System.out.print(", " + current);
+			}
+			
+			
+			
+		}
+		if(visited.size() != adjList.length) {
+			for(int i =0; i< adjList.length; i++) {
+				if(!visited.contains(i))
+				{
+					int current = i;
+					visited.add(current);
+					for(Object item: adjList[current]) {
+						stack.push((Integer) item);
+					}
+					System.out.print(", " + current);
+				}
+			}
+		}
 	}
 	
 	private static void dft(int vertex, Boolean visited[]){
