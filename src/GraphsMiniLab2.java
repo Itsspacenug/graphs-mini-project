@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -42,6 +43,7 @@ public class GraphsMiniLab2
 {
 	static final int numOfVertices = 10;
 	static LinkedList<Integer>[] adjList;
+	static Boolean[] toBeVisited;
 		
 	public static void main (String[] args) throws IOException
 	{
@@ -65,20 +67,30 @@ public class GraphsMiniLab2
 		 * 3) PRINT the order of your list using DFT and BFT
 		 */
 		Scanner sc1 = new Scanner(new File("edgesB.txt"));
-		
 		while(sc1.hasNextLine()) {
 			Scanner sc = new Scanner(sc1.nextLine().replace(',', ' '));
 			
-			int num = sc.nextInt();
-			adjList[num].add(sc.nextInt());
-			//Collections.reverse(adjList[num]);
+			int index = sc.nextInt();
+			Integer num = sc.nextInt();
+			adjList[index].add(num);
 		}
+		toBeVisited = new Boolean[numOfVertices];
+		Arrays.fill(toBeVisited, false);
+		
 		/*for(int i =0; i < adjList.length; i++) {
 			System.out.println(i + ": " + adjList[i].toString());
 		}*/
 		
 		Scanner sc2 = new Scanner(new File("edgesC.txt"));
-		
+		/*while(sc2.hasNextLine()) {
+			Scanner sc = new Scanner(sc2.nextLine().replace(',', ' '));
+			
+			int index = sc.nextInt();
+			Integer num = sc.nextInt();
+			adjList[index].add(num);
+		}
+		toBeVisited = new Boolean[numOfVertices];
+		Arrays.fill(toBeVisited, false);*/
 		depthFirstTraversal();
 	}
 	
@@ -93,6 +105,7 @@ public class GraphsMiniLab2
 		HashSet<Integer> visited = new HashSet<>();
 		Stack<Integer> stack = new Stack<>();
 		visited.add(0);
+		toBeVisited[0] = true;
 		System.out.print(0+ "");
 		for(Object item: adjList[0]) {
 			stack.push((Integer)item);
@@ -102,26 +115,23 @@ public class GraphsMiniLab2
 			int current = stack.pop();
 			if(!visited.contains(current)) {
 				visited.add(current);
-				for(Object item: adjList[current]) {
-					stack.push((Integer) item);
-				}
+				toBeVisited[current] = true;
 				System.out.print(", " + current);
+				for(int i = adjList[current].size()-1; i >= 0; i--) {
+					stack.push(adjList[current].get(i));
+				}
+				
 			}
 			
 			
 			
 		}
-		if(visited.size() != adjList.length) {
-			for(int i =0; i< adjList.length; i++) {
-				if(!visited.contains(i))
-				{
-					int current = i;
-					visited.add(current);
-					for(Object item: adjList[current]) {
-						stack.push((Integer) item);
-					}
-					System.out.print(", " + current);
-				}
+		for(int i =0; i < toBeVisited.length; i++) {
+			if(toBeVisited[i] == false) {
+				int current = i;
+				visited.add(current);
+				toBeVisited[current] = true;
+				System.out.print(", " + current);
 			}
 		}
 	}
