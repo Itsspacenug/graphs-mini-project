@@ -41,7 +41,7 @@ import java.util.Scanner;
 
 public class GraphsMiniLab2
 {
-	static final int numOfVertices = 10;
+	static final int numOfVertices = 6;
 	static LinkedList<Integer>[] adjList;
 	static Boolean[] toBeVisited;
 		
@@ -81,17 +81,8 @@ public class GraphsMiniLab2
 			System.out.println(i + ": " + adjList[i].toString());
 		}*/
 		
-		Scanner sc2 = new Scanner(new File("edgesC.txt"));
-		/*while(sc2.hasNextLine()) {
-			Scanner sc = new Scanner(sc2.nextLine().replace(',', ' '));
-			
-			int index = sc.nextInt();
-			Integer num = sc.nextInt();
-			adjList[index].add(num);
-		}
-		toBeVisited = new Boolean[numOfVertices];
-		Arrays.fill(toBeVisited, false);*/
-		depthFirstTraversal();
+		//depthFirstTraversal();
+		breadthFirstTraversal();
 	}
 	
 	public static void depthFirstTraversal(){
@@ -107,8 +98,8 @@ public class GraphsMiniLab2
 		visited.add(0);
 		toBeVisited[0] = true;
 		System.out.print(0+ "");
-		for(Object item: adjList[0]) {
-			stack.push((Integer)item);
+		for(int i = adjList[0].size()-1; i >= 0; i--) {
+			stack.push(adjList[0].get(i));
 		}
 		
 		while(!stack.isEmpty()) {
@@ -120,7 +111,6 @@ public class GraphsMiniLab2
 				for(int i = adjList[current].size()-1; i >= 0; i--) {
 					stack.push(adjList[current].get(i));
 				}
-				
 			}
 			
 			
@@ -147,6 +137,38 @@ public class GraphsMiniLab2
 		 *	
 		 *	-Be sure to use a queue to manage the order in which you visit the vertices.
 		 */
+		
+		HashSet<Integer> visited = new HashSet<>();
+		Queue<Integer> queue = new LinkedList<>();
+		visited.add(0);
+		toBeVisited[0] = true;
+		System.out.print(0+ "");
+		for(Object item: adjList[0]) {
+			queue.offer((Integer)item);
+		}
+		
+		while(!queue.isEmpty()) {
+			int current = queue.poll();
+			if(!visited.contains(current)) {
+				visited.add(current);
+				toBeVisited[current] = true;
+				System.out.print(", " + current);
+				for(Object item: adjList[0]) {
+					queue.offer((Integer)item);
+				}
+			}
+			
+			
+			
+		}
+		for(int i =0; i < toBeVisited.length; i++) {
+			if(toBeVisited[i] == false) {
+				int current = i;
+				visited.add(current);
+				toBeVisited[current] = true;
+				System.out.print(", " + current);
+			}
+		}
 		 
 	}
 
