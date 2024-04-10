@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class Graph {
+public class Graph implements AirlineGraph{
 	private int[][] graph;
 	private Stack<Integer> stack;
 	
@@ -12,7 +12,7 @@ public class Graph {
 	which must be a 10 X 10 grid. This method should also fill in the graph by setting the points
 	contained in the data file "connections.dat" to be the designated value.*/
 	public Graph() throws IOException {
-		graph = new int[10][10];
+		graph = new int[SIZE][SIZE];
 		Scanner sc = new Scanner(new File("connections.dat"));
 		
 		while(sc.hasNextLine()) {
@@ -26,21 +26,30 @@ public class Graph {
 	}
 	
 	//Returns the index position of the specified airportCode.
-	private int findAirportCode(String airportCode) {
-		return 0;
+	public int findAirportCode(String airportCode) {
+		for(int i=0; i<this.airportCode.length; i++) {
+			if(Graph.airportCode[i].equals(airportCode)) {
+				return i;
+			}
+		}
+		return -1;
 		 	
 	}
 	
 	//Returns true if Point edge is connected, false otherwise.
-	private boolean adjacent(Point edge) {
-		return false;
+	public boolean adjacent(Point edge) {
+		int start = edge.x;
+		int end = edge.y;
+		return graph[start][end] >0;
 		
 	}
 	
 	/*Takes in an airport code and returns an array filled with the lowest
 	cost to get from the source to every other city/airport.*/
 	public int[] shortestPath(String source) {
-		return null;
+		int[] cost = new int[SIZE];
+		
+		return cost;
 		
 	}
 	
@@ -66,6 +75,22 @@ public class Graph {
 				if (node is adj. to p.x) && findPath(length – 1, Point(node, p.y))
 					push the current city/node onto the stack
 					return true*/
+		if(length == 1) {
+			if(adjacent(p)) {
+				stack.push(p.y);
+				return true;
+			}
+		}
+		else {
+			for(String port : this.airportCode) {
+				int loc = findAirportCode(port);
+				Point current = new Point(loc,p.x);
+				if(adjacent(current) && findPath(length-1, new Point(loc,p.y))) {
+					stack.push(loc);
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	
