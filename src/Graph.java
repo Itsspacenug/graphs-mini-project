@@ -52,13 +52,14 @@ public class Graph implements AirlineGraph{
 		boolean[] weightFound = new boolean[SIZE];
 		int src = findAirportCode(source);
 		int costToCurrentIndex = 0;
-		smallestWeight[0].cost = 0;
-		smallestWeight[0].comingFrom = 0;
+		
 		
 		for(int i =0; i<SIZE ; i++) {
 			smallestWeight[i] = new Path(Integer.MAX_VALUE, -1);
 		}
 		
+		smallestWeight[0].cost = 0;
+		smallestWeight[0].comingFrom = -1;
 		while(true) {
 			for(int i=0 ; i<SIZE ; i++) {
 				costToCurrentIndex = graph[src][i];
