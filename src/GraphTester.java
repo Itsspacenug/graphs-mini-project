@@ -7,10 +7,13 @@ public class GraphTester {
     	System.out.println(map);
     	
     	int loc = map.findAirportCode("BOS");
-    	int loc1 = map.findAirportCode("IAH");
-    	System.out.println(loc + " " + loc1);
+    	int loc1 = map.findAirportCode("JFK");
+    	/*System.out.println(loc + " " + loc1);
     	
     	boolean q = map.adjacent(new Point(loc,loc1));
-    	System.out.println(q);
+    	System.out.println(q);*/
+    	
+    	boolean qq = map.findPath(map.SIZE, new Point(loc, loc1));
+    	System.out.println(qq);
 	}
 }

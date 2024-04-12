@@ -1,6 +1,7 @@
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -26,7 +27,7 @@ public class Graph implements AirlineGraph{
 	}
 	
 	//Returns the index position of the specified airportCode.
-	public int findAirportCode(String airportCode) {
+	private int findAirportCode(String airportCode) {
 		for(int i=0; i<this.airportCode.length; i++) {
 			if(Graph.airportCode[i].equals(airportCode)) {
 				return i;
@@ -37,7 +38,7 @@ public class Graph implements AirlineGraph{
 	}
 	
 	//Returns true if Point edge is connected, false otherwise.
-	public boolean adjacent(Point edge) {
+	private boolean adjacent(Point edge) {
 		int start = edge.x;
 		int end = edge.y;
 		return graph[start][end] >0;
@@ -47,9 +48,33 @@ public class Graph implements AirlineGraph{
 	/*Takes in an airport code and returns an array filled with the lowest
 	cost to get from the source to every other city/airport.*/
 	public int[] shortestPath(String source) {
-		int[] cost = new int[SIZE];
+		Path[] smallestWeight = new Path[SIZE];
+		boolean[] weightFound = new boolean[SIZE];
+		int src = findAirportCode(source);
+		int costToCurrentIndex = 0;
+		smallestWeight[0].cost = 0;
+		smallestWeight[0].comingFrom = 0;
 		
-		return cost;
+		for(int i =0; i<SIZE ; i++) {
+			smallestWeight[i] = new Path(Integer.MAX_VALUE, -1);
+		}
+		
+		while(true) {
+			for(int i=0 ; i<SIZE ; i++) {
+				costToCurrentIndex = graph[src][i];
+				if(graph[src][i] != 0 && 
+					!weightFound[i] &&
+					graph[src][i] + costToCurrentIndex > smallestWeight[i].cost
+				){
+					 smallestWeight[i].cost = graph[src][i] + costToCurrentIndex;
+					 smallestWeight[i].comingFrom = src;
+				}
+			}
+			weightFound[src] = true;
+			
+			
+		}
+		return smallestWeight;
 		
 	}
 	
@@ -114,4 +139,13 @@ public class Graph implements AirlineGraph{
 		}
 		return"";
 	}
+}
+class Path{
+	public int cost;
+	public int comingFrom;
+	
+	public Path(int cost, int comingFrom) {
+		this.cost = cost;
+		this.comingFrom = comingFrom;
+	} 
 }
