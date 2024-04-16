@@ -47,7 +47,7 @@ public class Graph implements AirlineGraph{
 	
 	/*Takes in an airport code and returns an array filled with the lowest
 	cost to get from the source to every other city/airport.*/
-	public int[] shortestPath(String source) {
+	public Path[] shortestPath(String source) {
 		Path[] smallestWeight = new Path[SIZE];
 		boolean[] weightFound = new boolean[SIZE];
 		int src = findAirportCode(source);
@@ -71,19 +71,45 @@ public class Graph implements AirlineGraph{
 					 smallestWeight[i].comingFrom = src;
 				}
 			}
+			
+			int nIndex =0;
+			for(int c=0; c<SIZE ; c++) {
+				if(!weightFound[src] && smallestWeight[src].cost < smallestWeight[nIndex].cost) {
+					nIndex = c;
+				}
+			}
+			
+			src = nIndex;
 			weightFound[src] = true;
+			costToCurrentIndex = smallestWeight[src].cost;
 			
-			
+			boolean done = true;
+			for(int i=0; i<SIZE ; i++) {
+				if(!weightFound[i]) {
+					done = false;
+				}
+			}
+			if(done) {
+				break;
+			}
 		}
 		return smallestWeight;
-		
 	}
 	
 	/*Takes in 2 airport codes and returns a String containing all the cities
 	visited from <start> to <end> in the order visited followed by the
 	total fare. This method should prioritize the cost of the trip.*/
 	public String cheapestRoute (String start, String end) {
-		return end;
+		Path[] costs = shortestPath(start);
+		String str = "";
+		int sNum = findAirportCode(start);
+		int eNum = findAirportCode(end);
+		int index = eNum;
+		while(index != sNum) {
+			str += costs[index].cost + " to ";
+			index = costs[index].comingFrom;
+		}
+		return str;
 		
 	}
 	
@@ -139,6 +165,15 @@ public class Graph implements AirlineGraph{
 			System.out.println();
 		}
 		return"";
+	}
+	public String ShortestPathToString(Path[] source) {
+		String str="[ ";
+		for(int i=0; i<SIZE; i++) {
+			if(i != SIZE-1) {
+				str += "" + source[i].cost + ", ";
+			}else {str += ""+ source[i].cost + "]";}
+		}
+		return str;
 	}
 }
 class Path{

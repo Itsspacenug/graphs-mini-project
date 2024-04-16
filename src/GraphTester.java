@@ -4,7 +4,7 @@ import java.io.IOException;
 public class GraphTester {
 	public static void main(String args[]) throws IOException{
 		Graph map = new Graph();
-    	System.out.println(map);
+    	//System.out.println(map);
     	
     	int loc = map.findAirportCode("BOS");
     	int loc1 = map.findAirportCode("JFK");
@@ -13,7 +13,10 @@ public class GraphTester {
     	boolean q = map.adjacent(new Point(loc,loc1));
     	System.out.println(q);*/
     	
-    	boolean qq = map.findPath(map.SIZE, new Point(loc, loc1));
-    	System.out.println(qq);
+    	//boolean qq = map.findPath(map.SIZE, new Point(loc, loc1));
+    	//System.out.println(qq);
+    	
+    	
+    	map.ShortestPathToString(map.shortestPath("BOS"));
 	}
 }
