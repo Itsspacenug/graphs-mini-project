@@ -17,6 +17,9 @@ public class GraphTester {
     	//System.out.println(qq);
     	
     	
-    	map.ShortestPathToString(map.shortestPath("BOS"));
+    	Graph shortestPath = new Graph();
+    	int[] shortestDistances = shortestPath.shortestPath("CHI");
+    	String shortestPathString = shortestPath.shortestPathToString(shortestDistances, "BOS");
+    	System.out.println(shortestPathString);
 	}
 }
