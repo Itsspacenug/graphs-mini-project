@@ -21,5 +21,8 @@ public class GraphTester {
     	int[] shortestDistances = shortestPath.shortestPath("CHI");
     	String shortestPathString = shortestPath.shortestPathToString(shortestDistances, "BOS");
     	System.out.println(shortestPathString);
+    	System.out.println();
+    	String shortestPathString1 = shortestPath.cameFromToString(shortestPath.cameFrom, "BOS");
+    	System.out.println(shortestPathString1);
 	}
 }

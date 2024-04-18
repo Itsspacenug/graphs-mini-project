@@ -9,6 +9,7 @@ public class Graph implements AirlineGraph{
 	public int[][] graph;
 	public Stack<Integer> stack;
 	public static final int INF = Integer.MAX_VALUE;
+    int[] cameFrom;
 	
 	/*Initializes a newly created Graph object. Initializes an empty stack and adjacency matrix,
 	which must be a 10 X 10 grid. This method should also fill in the graph by setting the points
@@ -25,6 +26,7 @@ public class Graph implements AirlineGraph{
 			graph[row][col] = val;
 		}
 		stack = new Stack<Integer>();
+		cameFrom = new int[SIZE];
 	}
 	
 	//Returns the index position of the specified airportCode.
@@ -49,52 +51,6 @@ public class Graph implements AirlineGraph{
 	/*Takes in an airport code and returns an array filled with the lowest
 	cost to get from the source to every other city/airport.*/
 	public int[] shortestPath(String source) {
-		/*Path[] smallestWeight = new Path[SIZE];
-		boolean[] weightFound = new boolean[SIZE];
-		int src = findAirportCode(source);
-		int costToCurrentIndex = 0;
-		
-		
-		for(int i =0; i<SIZE ; i++) {
-			smallestWeight[i] = new Path(Integer.MAX_VALUE, -1);
-		}
-		
-		smallestWeight[0].cost = 0;
-		smallestWeight[0].comingFrom = -1;
-		while(true) {
-			for(int i=0 ; i<SIZE ; i++) {
-				costToCurrentIndex = graph[src][i];
-				if(graph[src][i] != 0 && 
-					!weightFound[i] &&
-					graph[src][i] + costToCurrentIndex > smallestWeight[i].cost
-				){
-					 smallestWeight[i].cost = graph[src][i] + costToCurrentIndex;
-					 smallestWeight[i].comingFrom = src;
-				}
-			}
-			
-			int nIndex =0;
-			for(int c=0; c<SIZE ; c++) {
-				if(!weightFound[src] && smallestWeight[src].cost < smallestWeight[nIndex].cost) {
-					nIndex = c;
-				}
-			}
-			
-			src = nIndex;
-			weightFound[src] = true;
-			costToCurrentIndex = smallestWeight[src].cost;
-			
-			boolean done = true;
-			for(int i=0; i<SIZE ; i++) {
-				if(!weightFound[i]) {
-					done = false;
-				}
-			}
-			if(done) {
-				break;
-			}
-		}
-		return smallestWeight;*/
 		int n = SIZE;
         int[] smallestWeight = new int[n];
         boolean[] visited = new boolean[n];
@@ -119,8 +75,10 @@ public class Graph implements AirlineGraph{
             for (int i = 0; i < n; i++) {
                 if (!visited[i] && graph[minIndex][i] != 0 &&
                         smallestWeight[minIndex] != INF &&
-                        smallestWeight[minIndex] + graph[minIndex][i] < smallestWeight[i]) {
+                        smallestWeight[minIndex] + graph[minIndex][i] < smallestWeight[i]
+                   ){
                     smallestWeight[i] = smallestWeight[minIndex] + graph[minIndex][i];
+                    cameFrom[i] = minIndex;
                 }
             }
         }
@@ -132,7 +90,7 @@ public class Graph implements AirlineGraph{
         int min = INF;
         int minIndex = -1;
 
-        for (int i = 0; i < smallestWeight.length; i++) {
+        for (int i = 0; i < SIZE; i++) {
             if (!visited[i] && smallestWeight[i] <= min) {
                 min = smallestWeight[i];
                 minIndex = i;
@@ -146,14 +104,19 @@ public class Graph implements AirlineGraph{
 	visited from <start> to <end> in the order visited followed by the
 	total fare. This method should prioritize the cost of the trip.*/
 	public String cheapestRoute (String start, String end) {
-		Path[] costs = shortestPath(start);
-		String str = "";
+		int[] costs = shortestPath(start);
+		Stack<String> route = new Stack<String>();
+		
 		int sNum = findAirportCode(start);
 		int eNum = findAirportCode(end);
 		int index = eNum;
 		while(index != sNum) {
-			str += costs[index].cost + " to ";
-			index = costs[index].comingFrom;
+			route.push(airportCode[index]);
+			index = cameFrom[index];
+		}
+		String str = route.pop();
+		while(!route.isEmpty()) {
+			str+= " to " +route.pop();
 		}
 		return str;
 		
@@ -218,13 +181,11 @@ public class Graph implements AirlineGraph{
         sb.append(Arrays.toString(smallestWeight));
         return sb.toString();
     }
-}
-class Path{
-	public int cost;
-	public int comingFrom;
 	
-	public Path(int cost, int comingFrom) {
-		this.cost = cost;
-		this.comingFrom = comingFrom;
-	} 
+	public String cameFromToString(int[] cameFrom, String source) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Shortest Path Came From ").append(source).append(": ");
+        sb.append(Arrays.toString(cameFrom));
+        return sb.toString();
+    }
 }
