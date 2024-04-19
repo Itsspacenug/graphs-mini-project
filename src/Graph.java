@@ -19,11 +19,11 @@ public class Graph implements AirlineGraph{
 		Scanner sc = new Scanner(new File("connections.dat")); //takes in the file
 		
 		while(sc.hasNextLine()) { //goes through
-			Scanner cut = new Scanner(sc.nextLine().replace(',', ' '));
-			int row = cut.nextInt();
-			int col = cut.nextInt();
-			int val = cut.nextInt();
-			graph[row][col] = val;
+			Scanner cut = new Scanner(sc.nextLine().replace(',', ' ')); //organizes the while line
+			int row = cut.nextInt(); //cuts
+			int col = cut.nextInt(); //cuts
+			int val = cut.nextInt(); //cuts
+			graph[row][col] = val; //adds
 		}
 		stack = new Stack<Integer>();
 		cameFrom = new int[SIZE];
@@ -33,8 +33,8 @@ public class Graph implements AirlineGraph{
 	//Returns the index position of the specified airportCode.
 	public int findAirportCode(String airportCode) {
 		for (int i = 0; i < SIZE; i++) {
-            if (AirlineGraph.airportCode[i].equals(airportCode)) {
-                return i;
+            if (AirlineGraph.airportCode[i].equals(airportCode)) { //each index
+                return i; //returns specific code
             }
         }
         return -1; // Airport code not found
@@ -43,7 +43,7 @@ public class Graph implements AirlineGraph{
 	
 	//Returns true if Point edge is connected, false otherwise.
 	public boolean adjacent(Point edge) {
-		return graph[edge.x][edge.y] != 0;
+		return graph[edge.x][edge.y] != 0; //if on the graph returns true
 		
 	}
 	
@@ -54,20 +54,19 @@ public class Graph implements AirlineGraph{
         int[] smallestWeight = new int[n];
         boolean[] visited = new boolean[n];
 
-        // Initialize smallestWeight array with infinity and mark all vertices as unvisited
-        Arrays.fill(smallestWeight, INF);
-        Arrays.fill(visited, false);
+        
+        Arrays.fill(smallestWeight, INF); //initalize each with a big number so it can find the smallest value
+        Arrays.fill(visited, false); //makes all false
 
-        // Find the index of the source airport
-        int sourceIndex = findAirportCode(source);
+        
+        int sourceIndex = findAirportCode(source); //finds the index of the source airport
 
-        // The cost to reach the source itself is 0
-        smallestWeight[sourceIndex] = 0;
+        
+        smallestWeight[sourceIndex] = 0; //cost to 0
 
-        // Iterate over all vertices
-        for (int count = 0; count < n - 1; count++) {
-            // Find the vertex with the smallest weight that has not been visited yet
-            int minIndex = findMinIndex(smallestWeight, visited);
+        
+        for (int count = 0; count < n - 1; count++) { // goes over all vertices
+            int minIndex = findMinIndex(smallestWeight, visited); //find the vertex with the smallest weight
             visited[minIndex] = true;
 
             // Update the weights of adjacent vertices if the new weight is smaller
@@ -75,9 +74,9 @@ public class Graph implements AirlineGraph{
                 if (!visited[i] && graph[minIndex][i] != 0 &&
                         smallestWeight[minIndex] != INF &&
                         smallestWeight[minIndex] + graph[minIndex][i] < smallestWeight[i]
-                   ){
+                   ){ //parameters to be the smallest cost
                     smallestWeight[i] = smallestWeight[minIndex] + graph[minIndex][i];
-                    cameFrom[i] = minIndex;
+                    cameFrom[i] = minIndex; //adds where the cost came from
                 }
             }
         }
@@ -89,8 +88,8 @@ public class Graph implements AirlineGraph{
         int min = INF;
         int minIndex = -1;
 
-        for (int i = 0; i < SIZE; i++) {
-            if (!visited[i] && smallestWeight[i] <= min) {
+        for (int i = 0; i < SIZE; i++) { //goes over each index
+            if (!visited[i] && smallestWeight[i] <= min) { //if it hasnt been visited and is smaller than the set cost
                 min = smallestWeight[i];
                 minIndex = i;
             }
@@ -105,13 +104,13 @@ public class Graph implements AirlineGraph{
 	public String cheapestRoute (String start, String end) {
 		int[] costs = shortestPath(start);
 		Stack<String> route = new Stack<String>();
-		
+		 //finds each index
 		int sNum = findAirportCode(start);
 		int eNum = findAirportCode(end);
 		int index = eNum;
-		while(index != sNum) {
-			route.push(airportCode[index]);
-			index = cameFrom[index];
+		while(index != sNum) { //while its not the beginning
+			route.push(airportCode[index]); //adds to stack so it can forwards
+			index = cameFrom[index]; //changes the index to where the cost came from
 		}
 		String str = route.pop();
 		while(!route.isEmpty()) {
@@ -126,6 +125,7 @@ public class Graph implements AirlineGraph{
 	finish. If a path exists, the index values for each airport visited is
 	pushed onto the stack.*/
 	public boolean findPath(int length, Point p){
+		//all from the instruction
 		if (length == 1) {
             if (adjacent(p)) {
                 stack.push(p.y);
@@ -150,25 +150,25 @@ public class Graph implements AirlineGraph{
 	This method should prioritize the length of the path rather than the
 	cost.*/
 	public String findRoute(int length, String start, String end) {
-		int startIdx = findAirportCode(start);
-        int endIdx = findAirportCode(end);
-        if (startIdx == -1 || endIdx == -1) {
+		int startIdx = findAirportCode(start); //index
+        int endIdx = findAirportCode(end); //index
+        if (startIdx == -1 || endIdx == -1) { //makes sure the input isnt wrong
             return "There is no such connection";
         }
-        stack.clear();
-        if (findPath(length, new Point(startIdx, endIdx))) {
+        stack.clear(); //reuses the stack 
+        if (findPath(length, new Point(startIdx, endIdx))) {//calls findPath to see if there is a path
             StringBuilder route = new StringBuilder();
-            int prev = startIdx;
-            int totalFare = 0;
-            while (!stack.isEmpty()) {
-                int curr = stack.pop();
-                route.append(AirlineGraph.city[curr]).append(" to ");
-                totalFare += graph[prev][curr];
+            int prev = startIdx; //track the prev index
+            int totalFare = 0; //tracks total toll 
+            while (!stack.isEmpty()) { //while stack is not empty
+                int curr = stack.pop(); //takes into stack
+                route.append(AirlineGraph.city[curr]).append(" to "); //adds the name of city
+                totalFare += graph[prev][curr]; //adds the total fare
                 prev = curr;
             }
-            route.append(AirlineGraph.city[endIdx]).append(" -> Total fare: ").append(totalFare);
-            return route.toString();
-        } else {
+            route.append(AirlineGraph.city[endIdx]).append(" -> Total fare: ").append(totalFare); //adds the final fare
+            return route.toString(); //prints
+        } else { //if findPath is empty
             return "There is no such connection!";
         }
 		
@@ -184,6 +184,7 @@ public class Graph implements AirlineGraph{
 		}
 		return"";
 	}
+	// test methods to check if the methods work
 	public String shortestPathToString(int[] smallestWeight, String source) {
 		StringBuilder sb = new StringBuilder();
         for (int i = 0; i < SIZE; i++) {
@@ -195,6 +196,7 @@ public class Graph implements AirlineGraph{
         return sb.toString();
     }
 	
+	//checks to see if the variable prints correctly
 	public String cameFromToString(int[] cameFrom, String source) {
         StringBuilder sb = new StringBuilder();
         sb.append("Shortest Path Came From ").append(source).append(": ");
