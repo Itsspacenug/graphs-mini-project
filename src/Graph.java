@@ -16,9 +16,9 @@ public class Graph implements AirlineGraph{
 	contained in the data file "connections.dat" to be the designated value.*/
 	public Graph() throws IOException {
 		graph = new int[SIZE][SIZE];
-		Scanner sc = new Scanner(new File("connections.dat"));
+		Scanner sc = new Scanner(new File("connections.dat")); //takes in the file
 		
-		while(sc.hasNextLine()) {
+		while(sc.hasNextLine()) { //goes through
 			Scanner cut = new Scanner(sc.nextLine().replace(',', ' '));
 			int row = cut.nextInt();
 			int col = cut.nextInt();
@@ -27,24 +27,23 @@ public class Graph implements AirlineGraph{
 		}
 		stack = new Stack<Integer>();
 		cameFrom = new int[SIZE];
+		Arrays.fill(cameFrom, -1); // Initialize predecessor array with -1
 	}
 	
 	//Returns the index position of the specified airportCode.
 	public int findAirportCode(String airportCode) {
-		for(int i=0; i<this.airportCode.length; i++) {
-			if(Graph.airportCode[i].equals(airportCode)) {
-				return i;
-			}
-		}
-		return -1;
+		for (int i = 0; i < SIZE; i++) {
+            if (AirlineGraph.airportCode[i].equals(airportCode)) {
+                return i;
+            }
+        }
+        return -1; // Airport code not found
 		 	
 	}
 	
 	//Returns true if Point edge is connected, false otherwise.
 	public boolean adjacent(Point edge) {
-		int start = edge.x;
-		int end = edge.y;
-		return graph[start][end] >0;
+		return graph[edge.x][edge.y] != 0;
 		
 	}
 	
@@ -127,32 +126,22 @@ public class Graph implements AirlineGraph{
 	finish. If a path exists, the index values for each airport visited is
 	pushed onto the stack.*/
 	public boolean findPath(int length, Point p){
-		/*if length equals 1
-			if adjacent(p)
-				push the ending city onto the stack
-				return true
-		else
-			for every node in the graph
-				if (node is adj. to p.x) && findPath(length � 1, Point(node, p.y))
-					push the current city/node onto the stack
-					return true*/
-		if(length == 1) {
-			if(adjacent(p)) {
-				stack.push(p.y);
-				return true;
-			}
-		}
-		else {
-			for(String port : this.airportCode) {
-				int loc = findAirportCode(port);
-				Point current = new Point(loc,p.x);
-				if(adjacent(current) && findPath(length-1, new Point(loc,p.y))) {
-					stack.push(loc);
-					return true;
-				}
-			}
-		}
-		return false;
+		if (length == 1) {
+            if (adjacent(p)) {
+                stack.push(p.y);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            for (int i = 0; i < SIZE; i++) {
+                if (graph[p.x][i] != 0 && findPath(length - 1, new Point(i, p.y))) {
+                    stack.push(i);
+                    return true;
+                }
+            }
+            return false;
+        }
 	}
 	
 	/*If a path with the specified length exists, return a String containing all
@@ -161,7 +150,27 @@ public class Graph implements AirlineGraph{
 	This method should prioritize the length of the path rather than the
 	cost.*/
 	public String findRoute(int length, String start, String end) {
-		return end;
+		int startIdx = findAirportCode(start);
+        int endIdx = findAirportCode(end);
+        if (startIdx == -1 || endIdx == -1) {
+            return "There is no such connection";
+        }
+        stack.clear();
+        if (findPath(length, new Point(startIdx, endIdx))) {
+            StringBuilder route = new StringBuilder();
+            int prev = startIdx;
+            int totalFare = 0;
+            while (!stack.isEmpty()) {
+                int curr = stack.pop();
+                route.append(AirlineGraph.city[curr]).append(" to ");
+                totalFare += graph[prev][curr];
+                prev = curr;
+            }
+            route.append(AirlineGraph.city[endIdx]).append(" -> Total fare: ").append(totalFare);
+            return route.toString();
+        } else {
+            return "There is no such connection!";
+        }
 		
 	}
 	
@@ -176,9 +185,13 @@ public class Graph implements AirlineGraph{
 		return"";
 	}
 	public String shortestPathToString(int[] smallestWeight, String source) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Shortest Path From ").append(source).append(": ");
-        sb.append(Arrays.toString(smallestWeight));
+		StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                sb.append(graph[i][j]).append(" ");
+            }
+            sb.append("\n");
+        }
         return sb.toString();
     }
 	
